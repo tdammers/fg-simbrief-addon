@@ -216,11 +216,10 @@ var importFOB = func (ofp) {
             return;
         }
         var tankNameNode = tankNode.getNode('name');
-        if (tankNameNode == nil) {
-            printf("Tank #%i not installed", tankNumber);
-            return;
+        var tankName = sprintf("Tank #%i", tankNumber);
+        if (tankNameNode != nil) {
+            tankName = tankNameNode.getValue() or tankName;
         }
-        var tankName = tankNameNode.getValue();
         var amount = unallocated;
         if (maxAmount != nil) {
             amount = math.min(amount, maxAmount);
