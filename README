@@ -1,0 +1,67 @@
+FG SimBrief Importer Add-On
+===========================
+
+What Is This?
+-------------
+
+This is an add-on for FlightGear that adds a SimBrief Import dialog.
+
+(See https://www.simbrief.com/).
+
+What It Does
+------------
+
+The SimBrief importer can import various aspects of a SimBrief flight plan into
+FlightGear. The import functionality attempts to support as many aircraft types
+as possible, but due to the nature of the beast, it does not work equally well
+with all of them.
+
+Ideally, the following functionality will be supported:
+
+- Flight Plan Route: This one imports the departure and destination airports,
+  and all enroute waypoints, into the default flightplan. If "Activate
+  immediately" is checked, it will also activate the flightplan.
+- Departure RWY, SID: This will attempt to select the planned departure runway,
+  and the planned SID, from the flightplan. Note that this will only work if
+  your FlightGear navdata matches the selections from SimBrief, which may not
+  be the case, especially if you're using the default FG navdata and/or an
+  outdated AIRAC cycle in SimBrief.
+- Arrival RWY, STAR: This will attempt to select the planned arrival runway and
+  STAR. The same caveats apply as with the departure runway and SID.
+- Performance Init: This sets a handful of key performance parameters;
+  currently: cruise altitude and callsign.
+- Payload: Imports passenger and cargo weights, and attempts to distribute them
+  sensibly over available payload weight slots.
+- Fuel: Imports block fuel as per the flightplan, and attempts to distribute it
+  sensibly over available fuel tanks. Because the importer has no idea where
+  those tanks are located, or what their priorities are, it starts at the top,
+  and uses a very crude logic to detect left/right pairs. (A more sophisticated
+  fuel distribution system may be provided in the future).
+- Winds Aloft: Runs a background process that sets winds aloft according to the
+  forecast winds in the flightplan. This will only work with Basic Weather,
+  since the Advanced Weather engine runs its own wind simulation that will
+  overwrite winds aloft regardless of what we set.
+
+Supported Aircraft Types (as per 09/2021)
+-----------------------------------------
+
+                         | FPL | Dep/SID | Arr/STAR | Perf Init | Payload | Fuel |
++------------------------+-----+---------+----------+-----------+---------+------+
+| E-Jet-family-YV        | E-Jet uses its own version of the simbrief importer   |
++------------------------+-----+---------+----------+-----------+---------+------+
+| A320-family            | A320 uses its own simbrief importer                   |
++------------------------+-----+---------+----------+-----------+---------+------+
+| 747-8i                 | yes | yes     | yes      | yes       | yes     | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| 747-400                | yes | yes     | yes      | yes       | no      | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| 737-800YV              | yes | yes     | yes      | yes       | no      | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| 777                    | yes | yes     | yes      | yes       | no      | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| Citation-II            | yes | yes     | yes      | yes       | yes     | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| CRJ700-family          | yes | yes     | yes      | yes       | yes     | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| QSeries                | yes | yes     | yes      | yes       | no      | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+

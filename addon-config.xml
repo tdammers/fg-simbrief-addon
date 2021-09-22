@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<PropertyList>
+    <sim>
+        <simbrief>
+            <username type="string" userarchive="y" />
+            <options>
+                <autocommit type="bool" userarchive="y">0</autocommit>
+                <import-fp type="bool" userarchive="y">1</import-fp>
+                <import-departure type="bool" userarchive="y">0</import-departure>
+                <import-arrival type="bool" userarchive="y">0</import-arrival>
+                <import-payload type="bool" userarchive="y">0</import-payload>
+                <import-fob type="bool" userarchive="y">0</import-fob>
+                <import-perfinit type="bool" userarchive="y">0</import-perfinit>
+                <import-winds-aloft type="bool" userarchive="y">0</import-winds-aloft>
+            </options>
+            <downloading type="bool">0</downloading>
+            <text-status type="string"></text-status>
+        </simbrief>
+    </sim>
+    <!--
+            <path>/sim/simbrief/username</path>
+            <path>/sim/simbrief/options/autocommit</path>
+            <path>/sim/simbrief/options/import-payload</path>
+            <path>/sim/simbrief/options/import-fob</path>
+            <path>/sim/simbrief/options/import-perfinit</path>
+            <path>/sim/simbrief/options/import-winds-aloft</path>
+    -->
+</PropertyList>

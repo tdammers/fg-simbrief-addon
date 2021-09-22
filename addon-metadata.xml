@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+  <meta>
+    <file-type type="string">FlightGear add-on metadata</file-type>
+    <format-version type="int">1</format-version>
+  </meta>
+
+  <addon>
+    <identifier type="string">nl.tobiasdammers.fg-simbrief-addon</identifier>
+    <name type="string">SimBrief importer</name>
+    <version type="string">0.1.0</version>
+
+    <authors>
+      <author>
+        <name type="string">Tobias Dammers</name>
+        <email type="string">tdammers@gmail.com</email>
+        <url type="string">https://github.com/tdammers</url>
+      </author>
+    </authors>
+
+    <maintainers>
+      <maintainer>
+        <name type="string">Tobias Dammers</name>
+        <email type="string">tdammers@gmail.com</email>
+        <url type="string">https://github.com/tdammers</url>
+      </maintainer>
+    </maintainers>
+
+    <short-description type="string">
+      SimBrief importer
+    </short-description>
+
+    <long-description type="string">
+    </long-description>
+
+    <license>
+      <designation type="string">
+        MIT
+      </designation>
+
+      <url type="string">https://mit-license.org/</url>
+    </license>
+
+    <min-FG-version type="string">2017.4.0</min-FG-version>
+    <max-FG-version type="string">none</max-FG-version>
+
+    <urls>
+      <home-page type="string">
+        https://github.com/tdammers/fg-simbrief-addon
+      </home-page>
+
+      <download type="string">
+        https://github.com/tdammers/fg-simbrief-addon
+      </download>
+
+      <support type="string">
+      </support>
+
+      <code-repository type="string">
+        https://github.com/tdammers/fg-simbrief-addon
+      </code-repository>
+    </urls>
+
+    <tags>
+      <tag type="string">simbrief</tag>
+      <tag type="string">flightplan</tag>
+      <tag type="string">routemanager</tag>
+    </tags>
+
+  </addon>
+</PropertyList>
