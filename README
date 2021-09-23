@@ -25,7 +25,8 @@ Ideally, the following functionality will be supported:
   and the planned SID, from the flightplan. Note that this will only work if
   your FlightGear navdata matches the selections from SimBrief, which may not
   be the case, especially if you're using the default FG navdata and/or an
-  outdated AIRAC cycle in SimBrief.
+  outdated AIRAC cycle in SimBrief. SID selection will also fail if SimBrief
+  uses a different naming convention than FG's navdata.
 - Arrival RWY, STAR: This will attempt to select the planned arrival runway and
   STAR. The same caveats apply as with the departure runway and SID.
 - Performance Init: This sets a handful of key performance parameters;
@@ -33,10 +34,19 @@ Ideally, the following functionality will be supported:
 - Payload: Imports passenger and cargo weights, and attempts to distribute them
   sensibly over available payload weight slots.
 - Fuel: Imports block fuel as per the flightplan, and attempts to distribute it
-  sensibly over available fuel tanks. Because the importer has no idea where
-  those tanks are located, or what their priorities are, it starts at the top,
-  and uses a very crude logic to detect left/right pairs. (A more sophisticated
-  fuel distribution system may be provided in the future).
+  sensibly over available fuel tanks. Two fuel allocation strategies are
+  provided:
+  - "Balanced": distributes required fuel proportionally over all tanks,
+    according to their declared capacities - large tanks get more fuel, small
+    tanks get less fuel.
+  - "First come, first serve": distributes fuel by filling tanks in declaration
+    order. Some crude heuristic is in place that attempts to detect left/right
+    pairs of wing tanks from their names, to keep things balanced, but it is
+    not foolproof.
+  Which of these strategies is more suitable depends on the aircraft type. If
+  neither is good enough, but the aircraft comes with a "balance fuel" button,
+  the recommended way is to use either fuel strategy, and then simply press
+  the "balance fuel" button to let the aircraft sort it out.
 - Winds Aloft: Runs a background process that sets winds aloft according to the
   forecast winds in the flightplan. This will only work with Basic Weather,
   since the Advanced Weather engine runs its own wind simulation that will
@@ -47,19 +57,19 @@ Supported Aircraft Types (as per 09/2021)
 
                          | FPL | Dep/SID | Arr/STAR | Perf Init | Payload | Fuel |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| E-Jet-family-YV        | E-Jet uses its own version of the simbrief importer   |
+| E-Jet-family-YV [1]    |                         n/a                           |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| A320-family            | A320 uses its own simbrief importer                   |
+| A320-family [1]        |                         n/a                           |
 +------------------------+-----+---------+----------+-----------+---------+------+
 | 747-8i                 | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| 747-400                | yes | yes     | yes      | yes       | no      | yes  |
+| 747-400                | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| 737-800YV              | yes | yes     | yes      | yes       | no      | yes  |
+| 737-800YV [2]          | yes | yes     | yes      | yes       | partial | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| 777                    | yes | yes     | yes      | yes       | no      | yes  |
+| 777 [3]                | yes | yes     | yes      | yes       | no      | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| Citation-II            | yes | yes     | yes      | yes       | yes     | yes  |
+| Citation-II [4]        | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
 | Citation X             | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
@@ -67,5 +77,17 @@ Supported Aircraft Types (as per 09/2021)
 +------------------------+-----+---------+----------+-----------+---------+------+
 | QSeries                | yes | yes     | yes      | yes       | no      | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| DHC6                   | yes | yes     | yes      | yes       | yes     | yes  |
+| DHC6 [4]               | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
+
+[1] - This aircraft already includes a SimBrief import feature, so this addon
+      will either not work or disable itself. Please use the aircraft's
+      built-in SimBrief importer instead.
+[2] - Imports cargo, but not passengers, due to nonstandard handling of
+      passenger counts.
+[3] - Nonstandard handling of cargo and passengers.
+[4] - Imported flight plan is of limited use, because the aircraft does not
+      have an FMS.
+
+Aircraft types not on this list may or may not work; they simply haven't been
+tested. Contributions on this front are very welcome.

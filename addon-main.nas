@@ -286,9 +286,18 @@ var importFOB = func (ofp) {
 var importPayload = func (ofp) {
     var unit = ofp.getNode('params/units').getValue();
     var factor = ((unit == 'lbs') ? 1 : KG2LB);
-    var weightNodes = props.globals.getNode('/sim').getChildren('weight');
+    var weightNodes = [];
     var cargoWeightNodes = [];
     var paxWeightNodes = [];
+    var payloadNode = props.globals.getNode('payload');
+    if (payloadNode == nil) {
+        # yasim puts weights in `/sim/weight[]`
+        weightNodes = props.globals.getNode('/sim').getChildren('weight');
+    }
+    else {
+        # jsbsim puts weights in `/payload/weight[]`
+        weightNodes = payloadNode.getChildren('weight');
+    }
 
     foreach (var node; weightNodes) {
         var nodeName = node.getValue('name');
