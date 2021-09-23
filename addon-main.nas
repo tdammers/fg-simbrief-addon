@@ -593,8 +593,14 @@ var findMenuNode = func (create=0) {
 };
 
 var main = func(addon) {
-    if (globals['simbrief'] == nil) {
-        print("SIMBRIEF");
+    if (globals['simbrief'] != nil) {
+        print("SimBrief importer already present, not activating add-on");
+    }
+    elsif (props.globals.getNode('/FMGC/simbrief-username') != nil) {
+        print("A320 SimBrief import feature detected, not activating add-on");
+    }
+    else {
+        print("Loading SimBrief importer");
         globals['simbrief'] = {
             'loadFP': loadFP
         };
@@ -609,8 +615,5 @@ var main = func(addon) {
             },
         });
         fgcommand('reinit', {'subsystem': 'gui'});
-    }
-    else {
-        print("SIMBRIEF importer already present, not activating add-on");
     }
 };
