@@ -12,6 +12,7 @@
                 <import-fob type="bool" userarchive="y">0</import-fob>
                 <import-perfinit type="bool" userarchive="y">0</import-perfinit>
                 <import-winds-aloft type="bool" userarchive="y">0</import-winds-aloft>
+                <fuel-strategy type="string" userarchive="y">balanced</fuel-strategy>
             </options>
             <downloading type="bool">0</downloading>
             <text-status type="string"></text-status>

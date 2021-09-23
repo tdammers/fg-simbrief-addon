@@ -205,9 +205,10 @@ var importFOB = func (ofp) {
     var fob = ofp.getNode('fuel/plan_ramp').getValue() * fuelFactor;
     var unallocated = fob;
     var tankNodes = props.globals.getNode('/consumables/fuel').getChildren('tank');
-    var numTanks = size(tankNodes);
+    var strategy = getprop('sim/simbrief/options/fuel-strategy');
+    printf("Allocating %1.1f kg (%1.1f lbs) of fuel", fob, fob * KG2LB);
 
-    printf("Fuel to allocate: %1.1f kg", fob);
+    var numTanks = size(tankNodes);
 
     var allocate = func(tankNumber, maxAmount = nil) {
         var tankNode = tankNodes[tankNumber];
@@ -243,19 +244,42 @@ var importFOB = func (ofp) {
         allocate(tank2, allocate2);
     }
 
-    var i = 0;
-    while (i < numTanks) {
-        var tankNode = tankNodes[i];
-        var tankName = tankNode.getValue('name') or 'unnamed';
-        if (i >= numTanks - 1 or string.imatch(tankName, "*center*")) {
-            allocate(i);
-            i = i + 1;
-        }
-        else {
-            allocatePair(i, i + 1);
-            i = i + 2;
+    if (strategy == 'first-come-first-serve') {
+        print("Using 'first come, first serve' strategy");
+        var i = 0;
+        while (i < numTanks) {
+            var tankNode = tankNodes[i];
+            var tankName = tankNode.getValue('name') or 'unnamed';
+            if (i >= numTanks - 1 or
+                string.imatch(tankName, "*center*") or
+                string.imatch(tankName, "*front*") or
+                string.imatch(tankName, "*rear*")) {
+                allocate(i);
+                i = i + 1;
+            }
+            else {
+                allocatePair(i, i + 1);
+                i = i + 2;
+            }
         }
     }
+    elsif (strategy == 'balanced') {
+        var totalFuel = unallocated;
+        var totalCapacity = 0;
+        foreach (var tankNode; tankNodes) {
+            var capacity = tankNode.getValue('capacity-m3');
+            totalCapacity = totalCapacity + capacity;
+        }
+        for (var i = 0; i < numTanks; i += 1) {
+            var tankNode = tankNodes[i];
+            var capacity = tankNode.getValue('capacity-m3');
+            allocate(i, totalFuel * capacity / totalCapacity);
+        }
+    }
+    else {
+        printf("Invalid strategy '%s', please allocate fuel manually", strategy);
+    }
+
     printf("Fuel not allocated: %1.1f kg", unallocated);
 };
 

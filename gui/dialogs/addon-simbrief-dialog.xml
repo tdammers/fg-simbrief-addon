@@ -147,6 +147,24 @@
                 <halign>left</halign>
                 <pref-width>100</pref-width>
             </checkbox>
+            <group>
+                <layout>hbox</layout>
+                <text>
+                    <label>Strategy</label>
+                </text>
+                <combo>
+                    <property>/sim/simbrief/options/fuel-strategy</property>
+                    <binding>
+                        <command>dialog-apply</command>
+                    </binding>
+                    <halign>left</halign>
+                    <pref-width>100</pref-width>
+                    <value>first-come-first-serve</value>
+                    <value>balanced</value>
+                </combo>
+                <halign>left</halign>
+                <pref-width>100</pref-width>
+            </group>
         </group>
         <group>
             <layout>hbox</layout>
