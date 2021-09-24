@@ -16,6 +16,7 @@
             </options>
             <downloading type="bool">0</downloading>
             <text-status type="string"></text-status>
+            <aloft-updater-status type="string">stopped</aloft-updater-status>
         </simbrief>
     </sim>
     <!--

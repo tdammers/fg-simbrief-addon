@@ -168,6 +168,7 @@
         </group>
         <group>
             <layout>hbox</layout>
+            <halign>left</halign>
             <checkbox>
                 <property>/sim/simbrief/options/import-winds-aloft</property>
                 <label>Winds Aloft</label>
@@ -177,6 +178,31 @@
                 <halign>left</halign>
                 <pref-width>100</pref-width>
             </checkbox>
+            <text>
+                <label>Updater: unknown</label>
+                <format>Updater: %s</format>
+                <property>/sim/simbrief/aloft-updater-status</property>
+                <live type="bool">true</live>
+                <halign>left</halign>
+            </text>
+            <button>
+                <legend>Start</legend>
+                <binding>
+                    <command>nasal</command>
+                    <script>simbrief.startAloftUpdater();</script>
+                </binding>
+                <halign>left</halign>
+            </button>
+            <button>
+                <legend>Stop</legend>
+                <binding>
+                    <command>nasal</command>
+                    <script>simbrief.stopAloftUpdater();</script>
+                </binding>
+                <halign>left</halign>
+            </button>
+            <empty>
+            </empty>
         </group>
         <hrule/>
         <group>

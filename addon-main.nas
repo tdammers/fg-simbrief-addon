@@ -40,7 +40,7 @@ var download = func (username, onSuccess, onFailure=nil) {
                 var errs = [];
                 call(onSuccess, [filename], nil, {}, errs);
                 if (size(errs) > 0) {
-                    setprop('/sim/simbrief/text-status', 'parser errors, see log for details');
+                    setprop('/sim/simbrief/text-status', 'errors, see log for details');
                     debug.printerror(errs);
                 }
                 else {
@@ -471,6 +471,14 @@ var startAloftUpdater = func () {
     }
     if (aloftTimer.isRunning) return;
     aloftTimer.start();
+    setprop('/sim/simbrief/aloft-updater-status', 'running');
+};
+
+var stopAloftUpdater = func () {
+    if (aloftTimer != nil) {
+        aloftTimer.stop();
+        setprop('/sim/simbrief/aloft-updater-status', 'stopped');
+    }
 };
 
 var importWindsAloft = func (ofp) {
@@ -604,7 +612,9 @@ var main = func(addon) {
     else {
         print("Loading SimBrief importer");
         globals['simbrief'] = {
-            'loadFP': loadFP
+            'loadFP': loadFP,
+            'startAloftUpdater': startAloftUpdater,
+            'stopAloftUpdater': stopAloftUpdater,
         };
         var myMenuNode = findMenuNode(1);
         myMenuNode.setValues({
