@@ -63,6 +63,8 @@ Supported Aircraft Types (as per 09/2021)
 +------------------------+-----+---------+----------+-----------+---------+------+
 | 747-8i                 | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
+| MD-11 [5]              | yes | yes     | yes      | yes       | yes     | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
 | 747-400                | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
 | 737-800YV [2]          | yes | yes     | yes      | yes       | partial | yes  |
@@ -88,6 +90,8 @@ Supported Aircraft Types (as per 09/2021)
 [3] - Nonstandard handling of cargo and passengers.
 [4] - Imported flight plan is of limited use, because the aircraft does not
       have an FMS.
+[5] - Currently works, but devs plan to make a custom importer, at which point
+      [1] will apply.
 
 Aircraft types not on this list may or may not work; they simply haven't been
 tested. Contributions on this front are very welcome.
