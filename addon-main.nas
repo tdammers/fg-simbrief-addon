@@ -212,7 +212,9 @@ var importFOB = func (ofp) {
 
     var allocate = func(tankNumber, maxAmount = nil) {
         var tankNode = tankNodes[tankNumber];
-        if (tankNode == nil) {
+        var capacityNode = tankNode.getNode('capacity-m3');
+        var densityNode = tankNode.getNode('density-kgpm3');
+        if (tankNode == nil or capacityNode == nil or densityNode == nil) {
             printf("Tank #%i not installed", tankNumber);
             return;
         }
@@ -267,12 +269,12 @@ var importFOB = func (ofp) {
         var totalFuel = unallocated;
         var totalCapacity = 0;
         foreach (var tankNode; tankNodes) {
-            var capacity = tankNode.getValue('capacity-m3');
+            var capacity = tankNode.getValue('capacity-m3') or 0;
             totalCapacity = totalCapacity + capacity;
         }
         for (var i = 0; i < numTanks; i += 1) {
             var tankNode = tankNodes[i];
-            var capacity = tankNode.getValue('capacity-m3');
+            var capacity = tankNode.getValue('capacity-m3') or 0;
             allocate(i, totalFuel * capacity / totalCapacity);
         }
     }
