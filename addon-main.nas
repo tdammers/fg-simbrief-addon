@@ -403,12 +403,12 @@ var setAloftWinds = func (aloftPoint) {
         node.getChild('wind-speed-kt').setValue(aloftPoint.layers[i].spd);
         # node.getChild('temperature-degc').setValue(aloftPoint.layers[i].temp);
         logprint(
-            1,
-            sprintf("ALOFT #%i %5i': %03i/%i",
-                i,
+            2,
+            sprintf("ALOFT AFTER %5i': %03i/%i (slp = %02.2f)",
                 node.getChild('elevation-ft').getValue(),
                 node.getChild('wind-from-heading-deg').getValue(),
-                node.getChild('wind-speed-kt').getValue()));
+                node.getChild('wind-speed-kt').getValue(),
+                node.getChild('pressure-sea-level-inhg').getValue()));
     }
 };
 
