@@ -223,6 +223,13 @@
                     <script>simbrief.loadFP()</script>
                 </binding>
             </button>
+            <button>
+                <legend>Activate</legend>
+                <binding>
+                    <command>nasal</command>
+                    <script>commitFlightplan()</script>
+                </binding>
+            </button>
         </group>
     </group>
 

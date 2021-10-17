@@ -17,6 +17,10 @@ var urlencode = func(str) {
     return out;
 };
 
+var getFlightplan = nil;
+var commitFlightplan = nil;
+var modifyableFlightplan = nil;
+
 var download = func (username, onSuccess, onFailure=nil) {
     if (getprop('/sim/simbrief/downloading')) {
         print("SimBrief download already active");
@@ -527,6 +531,42 @@ var importWindsAloft = func (ofp) {
 };
 
 var loadFP = func () {
+    if (getFlightplan == nil) {
+        if (typeof(globals['getFlightplan']) == 'func') {
+            logprint(3, 'Found exiting getFlightplan function');
+            getFlightplan = globals['getFlightplan'];
+        }
+        else {
+            logprint(3, 'Using default getFlightplan function');
+            getFlightplan = func (index=0) {
+                if (index == 0) {
+                    return flightplan();
+                }
+                else {
+                    logprint(4, 'This aircraft does not support additional flightplans');
+                    return nil;
+                }
+            }
+        }
+    }
+
+    if (commitFlightplan == nil) {
+        if (typeof(globals['commitFlightplan']) == 'func') {
+            logprint(3, 'Found exiting commitFlightplan function');
+            commitFlightplan = globals['commitFlightplan'];
+        }
+        else {
+            logprint(3, 'Using default commitFlightplan function');
+            commitFlightplan = func () {
+                modifiedFlightplan.activate();
+                fgcommand("activate-flightplan", {active: 1});
+                modifiedFlightplan = nil;
+                setprop("/fms/flightplan-modifications", 1);
+                setprop("/autopilot/route-manager/active", 1);
+            }
+        }
+    }
+
     var username = getprop('/sim/simbrief/username');
     if (username == nil or username == '') {
         print("Username not set");
@@ -541,31 +581,14 @@ var loadFP = func () {
         }
 
         if (getprop('/sim/simbrief/options/import-fp') or 0) {
-            var modifyableFlightplan = flightplan();
-            var haveFMS = globals['fms'] != nil
-                            and typeof(fms) == 'hash'
-                            and typeof(fms['getModifyableFlightplan']) == 'func'
-                            and typeof(fms['commitFlightplan']) == 'func'
-                            and typeof(fms['kickRouteManager']) == 'func';
-
-            if (haveFMS) {
-                modifyableFlightplan = fms.getModifyableFlightplan();
-            }
+            var modifyableFlightplan = getFlightplan(1);
             var fp = toFlightplan(ofpNode, modifyableFlightplan);
             if (fp == nil) {
                 print("Error parsing flight plan");
             }
             else {
-                if (haveFMS) {
-                    if (getprop('/sim/simbrief/options/autocommit') or 0) {
-                        fms.commitFlightplan();
-                    }
-                    fms.kickRouteManager();
-                }
-                else {
-                    if (getprop('/sim/simbrief/options/autocommit') or 0) {
-                        fgcommand("activate-flightplan", props.Node.new({"activate": 1}));
-                    }
+                if (getprop('/sim/simbrief/options/autocommit') or 0) {
+                    commitFlightplan();
                 }
             }
         }
