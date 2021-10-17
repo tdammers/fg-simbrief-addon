@@ -19,7 +19,7 @@ var urlencode = func(str) {
 
 var getFlightplan = nil;
 var commitFlightplan = nil;
-var modifyableFlightplan = nil;
+var modifiedFlightplan = nil;
 
 var download = func (username, onSuccess, onFailure=nil) {
     if (getprop('/sim/simbrief/downloading')) {
@@ -543,8 +543,9 @@ var loadFP = func () {
                     return flightplan();
                 }
                 else {
-                    logprint(4, 'This aircraft does not support additional flightplans');
-                    return nil;
+                    if (modifiedFlightplan == nil)
+                        modifiedFlightplan = createFlightplan();
+                    return modifiedFlightplan;
                 }
             }
         }
