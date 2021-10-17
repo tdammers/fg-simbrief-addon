@@ -31,6 +31,11 @@ Ideally, the following functionality will be supported:
   STAR. The same caveats apply as with the departure runway and SID.
 - Performance Init: This sets a handful of key performance parameters;
   currently: cruise altitude and callsign.
+- Activate immediately: with this checkmark on, the imported flight plan will
+  immediately become the active flight plan after a successful import. Without
+  it, the flight plan will be staged as the "modified flightplan" first. This
+  only really makes sense in aircraft that support this properly, and allow
+  you to review the modified flightplan before activating it.
 - Payload: Imports passenger and cargo weights, and attempts to distribute them
   sensibly over available payload weight slots.
 - Fuel: Imports block fuel as per the flightplan, and attempts to distribute it
@@ -50,7 +55,8 @@ Ideally, the following functionality will be supported:
 - Winds Aloft: Runs a background process that sets winds aloft according to the
   forecast winds in the flightplan. This will only work with Basic Weather,
   since the Advanced Weather engine runs its own wind simulation that will
-  overwrite winds aloft regardless of what we set.
+  overwrite winds aloft regardless of what we set. The "Start" and "Stop"
+  buttons allow you to manually start and stop the winds updater.
 
 Supported Aircraft Types (as per 09/2021)
 -----------------------------------------
