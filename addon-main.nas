@@ -23,7 +23,7 @@ var modifyableFlightplan = nil;
 
 var download = func (username, onSuccess, onFailure=nil) {
     if (getprop('/sim/simbrief/downloading')) {
-        print("SimBrief download already active");
+        logprint(4, "SimBrief download already active");
     }
     setprop('/sim/simbrief/downloading', 1);
     setprop('/sim/simbrief/text-status', 'downloading...');
@@ -32,15 +32,15 @@ var download = func (username, onSuccess, onFailure=nil) {
     if (onFailure == nil) {
         onFailure = func (r) {
             setprop('/sim/simbrief/text-status', sprintf('HTTP error (%s/%s)', r.status, r.reason));
-            printf("SimBrief download from %s failed with HTTP status %s",
-                url, r.status);
+            logprint(4, sprintf("SimBrief download from %s failed with HTTP status %s",
+                url, r.status));
         }
     }
 
     http.save(url, filename)
         .done(func (r) {
                 setprop('/sim/simbrief/text-status', 'parsing...');
-                printf("SimBrief download from %s complete.", url);
+                logprint(3, sprintf("SimBrief download from %s complete.", url));
                 var errs = [];
                 call(onSuccess, [filename], nil, {}, errs);
                 if (size(errs) > 0) {
@@ -64,7 +64,7 @@ var read = func (filename=nil) {
     var xml = io.readxml(filename);
     var ofpNode = xml.getChild('OFP');
     if (ofpNode == nil) {
-        print("Error loading SimBrief OFP");
+        logprint(5, "Error loading SimBrief OFP");
         return nil;
     }
     else {
@@ -77,14 +77,14 @@ var toFlightplan = func (ofp, fp=nil) {
     var departureID = ofp.getNode('origin/icao_code').getValue();
     var departures = findAirportsByICAO(departureID);
     if (departures == nil or size(departures) == 0) {
-        printf("Airport not found: %s", departureID);
+        logprint(5, sprintf("Airport not found: %s", departureID));
         return nil;
     }
 
     var destinationID = ofp.getNode('destination/icao_code').getValue();
     var destinations = findAirportsByICAO(destinationID);
     if (destinations == nil or size(destinations) == 0) {
-        printf("Airport not found: %s", destinationID);
+        logprint(5, sprintf("Airport not found: %s", destinationID));
         return nil;
     }
 
@@ -128,7 +128,7 @@ var toFlightplan = func (ofp, fp=nil) {
         coords.set_latlon(
             ofpFix.getNode('pos_lat').getValue(),
             ofpFix.getNode('pos_long').getValue());
-        printf("%s %f %f", ident, coords.lat(), coords.lon());
+        logprint(2, sprintf("%s %f %f", ident, coords.lat(), coords.lon()));
         var wp = createWP(coords, ident);
         if (seenTOC and alt == initialAltitude) {
             # this is the waypoint where we expect to reach initial cruise
@@ -174,14 +174,14 @@ var toFlightplan = func (ofp, fp=nil) {
     fp.insertWaypoints(wps, 1);
     if (getprop('/sim/simbrief/options/import-departure') or 0) {
         departureRunwayID = ofp.getNode('origin').getValue('plan_rwy');
-        printf("Trying to select departure: %s / %s", sidID, departureRunwayID);
+        logprint(2, sprintf("Trying to select departure: %s / %s", sidID, departureRunwayID));
         fp.departure_runway = departures[0].runways[departureRunwayID];
         if (sidID != nil) {
             fp.sid = departures[0].getSid(sidID);
             if (fp.sid == nil)
                 fp.sid = departures[0].getSid(sidID ~ '.' ~ departureRunwayID);
             if (fp.sid == nil) {
-                printf("SID not found: %s", sidID);
+                logprint(4, sprintf("SID not found: %s", sidID));
             }
         }
     }
@@ -194,7 +194,7 @@ var toFlightplan = func (ofp, fp=nil) {
             if (fp.star == nil)
                 fp.star = destinations[0].getStar(starID ~ '.' ~ destinationRunwayID);
             if (fp.star == nil) {
-                printf("STAR not found: %s", starID);
+                logprint(4, sprintf("STAR not found: %s", starID));
             }
         }
     }
@@ -210,7 +210,7 @@ var importFOB = func (ofp) {
     var unallocated = fob;
     var tankNodes = props.globals.getNode('/consumables/fuel').getChildren('tank');
     var strategy = getprop('sim/simbrief/options/fuel-strategy');
-    printf("Allocating %1.1f kg (%1.1f lbs) of fuel", fob, fob * KG2LB);
+    logprint(3, sprintf("Allocating %1.1f kg (%1.1f lbs) of fuel", fob, fob * KG2LB));
 
     var numTanks = size(tankNodes);
 
@@ -219,7 +219,7 @@ var importFOB = func (ofp) {
         var capacityNode = tankNode.getNode('capacity-m3');
         var densityNode = tankNode.getNode('density-kgpm3');
         if (tankNode == nil or capacityNode == nil or densityNode == nil) {
-            printf("Tank #%i not installed", tankNumber);
+            logprint(3, sprintf("Tank #%i not installed", tankNumber));
             return;
         }
         var tankNameNode = tankNode.getNode('name');
@@ -235,7 +235,7 @@ var importFOB = func (ofp) {
                 tankNode.getNode('capacity-m3').getValue() *
                 tankNode.getNode('density-kgpm3').getValue();
         amount = math.min(amount, tankCapacity);
-        printf("Allocating %1.1f/%1.1f kg to %s", amount, unallocated, tankName);
+        logprint(3, sprintf("Allocating %1.1f/%1.1f kg to %s", amount, unallocated, tankName));
         tankNode.getNode('level-kg').setValue(amount);
         unallocated -= amount;
     }
@@ -251,7 +251,7 @@ var importFOB = func (ofp) {
     }
 
     if (strategy == 'first-come-first-serve') {
-        print("Using 'first come, first serve' strategy");
+        logprint(3, "Using 'first come, first serve' strategy");
         var i = 0;
         while (i < numTanks) {
             var tankNode = tankNodes[i];
@@ -283,10 +283,10 @@ var importFOB = func (ofp) {
         }
     }
     else {
-        printf("Invalid strategy '%s', please allocate fuel manually", strategy);
+        logprint(5, sprintf("Invalid strategy '%s', please allocate fuel manually", strategy));
     }
 
-    printf("Fuel not allocated: %1.1f kg", unallocated);
+    logprint(4, sprintf("Fuel not allocated: %1.1f kg", unallocated));
 };
 
 var importPayload = func (ofp) {
@@ -308,7 +308,7 @@ var importPayload = func (ofp) {
     foreach (var node; weightNodes) {
         var nodeName = node.getValue('name');
 
-        printf("Checking weight node %s", nodeName);
+        logprint(3, sprintf("Checking weight node %s", nodeName));
 
         if (string.imatch(nodeName, "*passenger*") or
             string.imatch(nodeName, "*pax*") or
@@ -325,7 +325,7 @@ var importPayload = func (ofp) {
     }
 
     if (size(paxWeightNodes) == 0 and size(cargoWeightNodes) == 0) {
-        printf("Alas, this aircraft does not seem to use the standard weights system. Please configure payload manually.");
+        logprint(4, sprintf("Alas, this aircraft does not seem to use the standard weights system. Please configure payload manually."));
         return;
     }
 
@@ -334,16 +334,16 @@ var importPayload = func (ofp) {
     var paxUnallocated = ofp.getNode('weights/payload').getValue() * factor - cargoUnallocated;
 
     var distribute = func (what, nodes, unallocated) {
-        printf("Allocating %s: %1.1f lbs", what, unallocated);
+        logprint(3, sprintf("Allocating %s: %1.1f lbs", what, unallocated));
         var totalF = 0;
         foreach (var node; nodes) {
             var f = node.getValue('max-lb') - node.getValue('min-lb');
             node.setValue('weight-lb', node.getValue('min-lb'));
             unallocated = unallocated - node.getValue('min-lb');
             totalF = totalF + f;
-            printf("Allocating %1.1f/%1.1f lbs to %s", node.getValue('min-lb'), unallocated, node.getValue('name'));
+            logprint(3, sprintf("Allocating %1.1f/%1.1f lbs to %s", node.getValue('min-lb'), unallocated, node.getValue('name')));
         }
-        printf("Remaining %s after minimum weights: %1.1f lbs", what, unallocated);
+        logprint(3, sprintf("Remaining %s after minimum weights: %1.1f lbs", what, unallocated));
         var remaining = unallocated;
         if (remaining > 0) {
             foreach (var node; nodes) {
@@ -354,15 +354,15 @@ var importPayload = func (ofp) {
                     node.getValue('weight-lb') +
                     toAdd);
                 unallocated = unallocated - toAdd;
-                printf("Allocating %1.1f/%1.1f lbs to %s", toAdd, unallocated, node.getValue('name'));
+                logprint(3, sprintf("Allocating %1.1f/%1.1f lbs to %s", toAdd, unallocated, node.getValue('name')));
             }
         }
-        printf("Remaining unallocated %s: %1.1f lbs", what, unallocated);
+        logprint(3, printf("Remaining unallocated %s: %1.1f lbs", what, unallocated));
         return unallocated;
     }
 
     if (size(paxWeightNodes) == 0) {
-        printf("No passenger space found, forcing passengers into cargo hold");
+        logprint(4, "No passenger space found, forcing passengers into cargo hold");
         cargoUnallocated = cargoUnallocated + paxUnallocated;
         paxUnallocated = 0;
     }
@@ -624,13 +624,13 @@ var findMenuNode = func (create=0) {
 
 var main = func(addon) {
     if (globals['simbrief'] != nil) {
-        print("SimBrief importer already present, not activating add-on");
+        logprint(3, "SimBrief importer already present, not activating add-on");
     }
     elsif (props.globals.getNode('/FMGC/simbrief-username') != nil) {
-        print("A320 SimBrief import feature detected, not activating add-on");
+        logprint(3, "A320 SimBrief import feature detected, not activating add-on");
     }
     else {
-        print("Loading SimBrief importer");
+        logprint(3, "Loading SimBrief importer");
         globals['simbrief'] = {
             'loadFP': loadFP,
             'startAloftUpdater': startAloftUpdater,
