@@ -57,7 +57,7 @@ Supported Aircraft Types (as per 09/2021)
 
                          | FPL | Dep/SID | Arr/STAR | Perf Init | Payload | Fuel |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| E-Jet-family-YV [1]    |                         n/a                           |
+| E-Jet-family-YV [6]    | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
 | A320-family [1]        |                         n/a                           |
 +------------------------+-----+---------+----------+-----------+---------+------+
@@ -92,6 +92,63 @@ Supported Aircraft Types (as per 09/2021)
       have an FMS.
 [5] - Currently works, but devs plan to make a custom importer, at which point
       [1] will apply.
+[6] - Current version (as of 2021-10-17) has its own SimBrief importer, which
+      this addon is based on. The next release of the E-Jet family will not
+      include the custom importer anymore, instead requiring you to use this
+      addon instead.
 
 Aircraft types not on this list may or may not work; they simply haven't been
 tested. Contributions on this front are very welcome.
+
+Aircraft Developer Information
+------------------------------
+
+The add-on should do a decent job on most aircraft types as long as you use the
+standard built-in features. Some tips for making your aircraft maximally
+compatible:
+
+- If your aircraft supports flight plan staging ("ACTIVE" vs. "MODIFIED" flight
+  plans), then you can support this by providing custom implementations of the
+  following two Nasal functions, which must be in the global namespace:
+
+    `globals.getFlightplan(index=0)` - `index` is 0 for the active flightplan,
+    1 for the modified (staged) flightplan.
+
+    `globals.commitFlightplan()` - activates the modified flightplan, if any,
+    and triggers the necessary updates to your instrumentation.
+- To make fuel allocation work, it is recommended that tanks that come in
+  left/right pairs include the words "Left" and "Right", respectively, in their
+  names, and listed consecutively. This way, the fuel import system will keep
+  their fuel levels synchronized. It is further recommended to list fuel tanks
+  in order of priority: this way, the "first-come-first-serve" strategy will do
+  the right thing, topping up the highest-priority tanks first, before adding
+  fuel to the additional tanks. For example, a typical airliner with two pairs
+  of wing tanks (inboard and outboard), and one center tank, might list them in
+  the following order:
+      - Inboard Left
+      - Inboard Right
+      - Outboard Left
+      - Outboard Right
+      - Center
+  This way, the first-come-first-serve strategy will first fill the inboard
+  tanks equally; if there is any fuel left, it will then fill the outboard
+  tanks equally, and finally, any remaining fuel goes into the center tank.
+- Passengers and cargo will be distributed over all weight nodes whose names
+  look like they're either passenger spaces or cargo holds. Weight nodes that
+  contain any of the words "passenger", "cabin", "pax", "class", "baggage" or
+  "seat" are considered passenger spaces; weight nodes that contain any of the
+  words "cargo" or "payload" are considered cargo holds.
+
+  Then, the algorithm fills them as follows:
+    1. If no passenger spaces were found, but passengers are to be transported,
+       it will treat all passengers as cargo (assuming some kind of cargo
+       aircraft or military transport, where passengers can be carried in the
+       cargo hold).
+    2. Then, all cargo is distributed over available cargo holds.
+    3. If any cargo is left, it is added to the passengers (the idea being that
+       baggage that doesn't fit in the cargo hold can go into the cabin).
+    4. The passenger weight is then distributed over the available passenger
+       spaces.
+- If your aircraft requires a custom SimBrief import, simply create a global
+  Nasal object or namespace named 'simbrief'; the addon will see that and
+  disable itself.
