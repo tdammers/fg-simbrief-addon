@@ -232,8 +232,8 @@ var importFOB = func (ofp) {
             amount = math.min(amount, maxAmount);
         }
         var tankCapacity =
-                tankNode.getNode('capacity-m3').getValue() *
-                tankNode.getNode('density-kgpm3').getValue();
+                (tankNode.getNode('capacity-m3').getValue() or 0) *
+                (tankNode.getNode('density-kgpm3').getValue() or 0);
         amount = math.min(amount, tankCapacity);
         logprint(3, sprintf("Allocating %1.1f/%1.1f kg to %s", amount, unallocated, tankName));
         tankNode.getNode('level-kg').setValue(amount);
