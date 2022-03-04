@@ -306,7 +306,7 @@ var importPayload = func (ofp) {
     }
 
     foreach (var node; weightNodes) {
-        var nodeName = node.getValue('name');
+        var nodeName = node.getValue('name') or '';
 
         logprint(3, sprintf("Checking weight node %s", nodeName));
 
