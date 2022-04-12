@@ -100,7 +100,7 @@ var toFlightplan = func (ofp, fp=nil) {
     var sidID = nil;
     var starID = nil;
     foreach (var ofpFix; ofpFixes) {
-        if (ofpFix.getNode('is_sid_star').getBoolValue()) {
+        if (ofpFix.getNode('is_sid_star').getValue() == 1) {
             if ((ofpFix.getValue('stage') == 'CLB') and
                 (getprop('/sim/simbrief/options/import-departure') or 0) and
                 (sidID == nil)) {
@@ -158,6 +158,7 @@ var toFlightplan = func (ofp, fp=nil) {
 
     # we have everything we need; it's now safe-ish to overwrite or
     # create the actual flightplan
+
 
     if (fp == nil) {
         fp = createFlightplan();
