@@ -99,7 +99,8 @@ var toFlightplan = func (ofp, fp=nil) {
     var ofpFixes = ofpNavlog.getChildren('fix');
     var sidID = nil;
     var starID = nil;
-    foreach (var ofpFix; ofpFixes) {
+    forindex (var fixIndex; ofpFixes) {
+        var ofpFix = ofpFixes[fixIndex];
         if (ofpFix.getNode('is_sid_star').getValue() == 1) {
             if ((ofpFix.getValue('stage') == 'CLB') and
                 (getprop('/sim/simbrief/options/import-departure') or 0) and
@@ -120,6 +121,13 @@ var toFlightplan = func (ofp, fp=nil) {
             if (ident == 'TOC') {
                 seenTOC = 1;
             }
+            continue;
+        }
+        # if no STAR was filed, simbrief may include the destination airport
+        # as a fix, which will break the flightplan if we later attempt to
+        # select a STAR, transition, or approach ourselves, so we need to skip
+        # it.
+        if (ident == destinationID and fixIndex == (size(ofpFixes) - 1)) {
             continue;
         }
         var altNode = ofpFix.getNode('altitude_feet');
