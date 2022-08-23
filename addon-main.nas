@@ -18,7 +18,6 @@ var urlencode = func(str) {
 };
 
 var getFlightplan = nil;
-var commitFlightplan = nil;
 var modifiedFlightplan = nil;
 
 var download = func (username, onSuccess, onFailure=nil) {
@@ -243,9 +242,15 @@ var importFOB = func (ofp) {
         var tankCapacity =
                 (tankNode.getNode('capacity-m3').getValue() or 0) *
                 (tankNode.getNode('density-kgpm3').getValue() or 0);
-        amount = math.min(amount, tankCapacity);
-        logprint(3, sprintf("Allocating %1.1f/%1.1f kg to %s", amount, unallocated, tankName));
-        tankNode.getNode('level-kg').setValue(amount);
+        if (tankCapacity < 10.0) {
+            logprint(3, sprintf("Tank #%i too small, assuming fuel line or unused, will not change", tankNumber));
+            amount = tankNode.getNode('level-kg').getValue();
+        }
+        else {
+            amount = math.min(amount, tankCapacity);
+            logprint(3, sprintf("Allocating %1.1f/%1.1f kg to %s", amount, unallocated, tankName));
+            tankNode.getNode('level-kg').setValue(amount);
+        }
         unallocated -= amount;
     }
 
@@ -560,21 +565,20 @@ var loadFP = func () {
         }
     }
 
-    if (commitFlightplan == nil) {
-        if (typeof(globals['commitFlightplan']) == 'func') {
-            logprint(3, 'Found exiting commitFlightplan function');
-            commitFlightplan = globals['commitFlightplan'];
-        }
-        else {
-            logprint(3, 'Using default commitFlightplan function');
-            commitFlightplan = func () {
-                modifiedFlightplan.activate();
-                fgcommand("activate-flightplan", {active: 1});
-                modifiedFlightplan = nil;
-                setprop("/fms/flightplan-modifications", 1);
-                setprop("/autopilot/route-manager/active", 1);
-            }
-        }
+    if (contains(globals, 'commitFlightplan') and
+            typeof(globals['commitFlightplan']) == 'func') {
+        logprint(3, 'Found existing commitFlightplan function');
+        commitFlightplan = globals['commitFlightplan'];
+    }
+    else {
+        logprint(3, 'Using default commitFlightplan function');
+        globals['commitFlightplan'] = func () {
+            modifiedFlightplan.activate();
+            fgcommand("activate-flightplan", {active: 1});
+            modifiedFlightplan = nil;
+            setprop("/fms/flightplan-modifications", 1);
+            setprop("/autopilot/route-manager/active", 1);
+        };
     }
 
     var username = getprop('/sim/simbrief/username');
