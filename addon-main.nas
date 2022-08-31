@@ -182,8 +182,13 @@ var toFlightplan = func (ofp, fp=nil) {
     fp.insertWaypoints(wps, 1);
     if (getprop('/sim/simbrief/options/import-departure') or 0) {
         departureRunwayID = ofp.getNode('origin').getValue('plan_rwy');
-        logprint(2, sprintf("Trying to select departure: %s / %s", sidID, departureRunwayID));
-        fp.departure_runway = departures[0].runways[departureRunwayID];
+        logprint(2, sprintf("Trying to select departure: %s / %s", sidID or 'NONE', departureRunwayID));
+        if (!contains(departures[0].runways, departureRunwayID)) {
+            logprint(4, sprintf("Runway not found: %s", departureRunwayID));
+        }
+        else {
+            fp.departure_runway = departures[0].runways[departureRunwayID];
+        }
         if (sidID != nil) {
             fp.sid = departures[0].getSid(sidID);
             if (fp.sid == nil)
@@ -196,7 +201,12 @@ var toFlightplan = func (ofp, fp=nil) {
     if (getprop('/sim/simbrief/options/import-arrival') or 0) {
         destinationRunwayID = ofp.getNode('destination').getValue('plan_rwy');
         printf("Trying to select arrival: %s / %s", starID, destinationRunwayID);
-        fp.destination_runway = destinations[0].runways[destinationRunwayID];
+        if (!contains(destinations[0].runways, destinationRunwayID)) {
+            logprint(4, sprintf("Runway not found: %s", destinationRunwayID));
+        }
+        else {
+            fp.destination_runway = destinations[0].runways[destinationRunwayID];
+        }
         if (starID != nil) {
             fp.star = destinations[0].getStar(starID);
             if (fp.star == nil)
