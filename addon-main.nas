@@ -98,6 +98,7 @@ var toFlightplan = func (ofp, fp=nil) {
     var ofpFixes = ofpNavlog.getChildren('fix');
     var sidID = nil;
     var starID = nil;
+    print("Importing fixes...");
     forindex (var fixIndex; ofpFixes) {
         var ofpFix = ofpFixes[fixIndex];
         if (ofpFix.getNode('is_sid_star').getValue() == 1) {
@@ -136,7 +137,20 @@ var toFlightplan = func (ofp, fp=nil) {
             ofpFix.getNode('pos_lat').getValue(),
             ofpFix.getNode('pos_long').getValue());
         logprint(2, sprintf("%s %f %f", ident, coords.lat(), coords.lon()));
-        var wp = createWP(coords, ident);
+        var wp = nil;
+        var err = [];
+        var airway = ofpFix.getValue('via_airway');
+        if (airway != nil) {
+            wp = call(createViaTo, [airway, ident], nil, {}, err);
+            if (size(err) > 0) {
+                print(err);
+                wp = nil;
+            }
+        }
+        if (wp == nil or size(err) > 0) {
+            wp = createWP(coords, ident);
+        }
+        append(wps, wp);
         if (seenTOC and alt == initialAltitude) {
             # this is the waypoint where we expect to reach initial cruise
             # altitude
@@ -160,7 +174,6 @@ var toFlightplan = func (ofp, fp=nil) {
             # This doesn't work, and I don't know why.
             # wp.setAltitude(alt, 'at');
         }
-        append(wps, wp);
     }
 
     # we have everything we need; it's now safe-ish to overwrite or
@@ -178,8 +191,10 @@ var toFlightplan = func (ofp, fp=nil) {
     fp.approach = nil;
     fp.approach_trans = nil;
     fp.departure = departures[0];
+    foreach (var wp; wps) {
+        fp.appendWP(wp);
+    }
     fp.destination = destinations[0];
-    fp.insertWaypoints(wps, 1);
     if (getprop('/sim/simbrief/options/import-departure') or 0) {
         departureRunwayID = ofp.getNode('origin').getValue('plan_rwy');
         logprint(2, sprintf("Trying to select departure: %s / %s", sidID or 'NONE', departureRunwayID));
@@ -254,7 +269,7 @@ var importFOB = func (ofp) {
                 (tankNode.getNode('density-kgpm3').getValue() or 0);
         if (tankCapacity < 10.0) {
             logprint(3, sprintf("Tank #%i too small, assuming fuel line or unused, will not change", tankNumber));
-            amount = tankNode.getNode('level-kg').getValue();
+            amount = tankNode.getNode('level-kg').getValue() or 0;
         }
         else {
             amount = math.min(amount, tankCapacity);
@@ -396,7 +411,7 @@ var importPayload = func (ofp) {
 
 var importPerfInit = func (ofp) {
     # climb profile: kts-below-FL100/kts-above-FL100/mach
-    var climbProfile = split('/', ofp.getNode('general/climb_profile').getValue());
+    var climbProfile = split('/', ofp.getNode('general/climb_profile').getValue() ~ '////');
     # descent profile: mach/kts-above-FL100/kts-below-FL100
     var descentProfile = split('/', ofp.getNode('general/descent_profile').getValue());
     var cruiseMach = ofp.getNode('general/cruise_mach').getValue();
