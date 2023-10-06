@@ -230,6 +230,17 @@
                     <script>commitFlightplan()</script>
                 </binding>
             </button>
+            <!-- uncomment for development: -->
+            <!--
+            <button>
+                <legend>Reload Addon</legend>
+                <binding>
+                    <command>addon-reload</command>
+                    <id>nl.tobiasdammers.fg-simbrief-addon</id>
+                </binding>
+            </button>
+            -->
+
         </group>
     </group>
 
