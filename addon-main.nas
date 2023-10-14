@@ -72,6 +72,9 @@ var read = func (filename=nil) {
 };
 
 var toFlightplan = func (ofp, fp=nil) {
+    # Options
+    var importAirways = getprop('/sim/simbrief/options/import-departure') or 0;
+
     # get departure and destination
     var departureID = ofp.getNode('origin/icao_code').getValue();
     var departures = findAirportsByICAO(departureID);
@@ -140,7 +143,7 @@ var toFlightplan = func (ofp, fp=nil) {
         var wp = nil;
         var err = [];
         var airway = ofpFix.getValue('via_airway');
-        if (airway != nil) {
+        if (importAirways and airway != nil) {
             wp = call(createViaTo, [airway, ident], nil, {}, err);
             if (size(err) > 0) {
                 print(err);

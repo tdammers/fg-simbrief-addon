@@ -9,6 +9,7 @@
                 <import-departure type="bool" userarchive="y">0</import-departure>
                 <import-arrival type="bool" userarchive="y">0</import-arrival>
                 <import-payload type="bool" userarchive="y">0</import-payload>
+                <import-airways type="bool" userarchive="y">0</import-airways>
                 <import-fob type="bool" userarchive="y">0</import-fob>
                 <import-perfinit type="bool" userarchive="y">0</import-perfinit>
                 <import-winds-aloft type="bool" userarchive="y">0</import-winds-aloft>

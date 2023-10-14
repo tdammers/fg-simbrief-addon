@@ -70,16 +70,30 @@
         <hrule/>
         <group>
             <layout>hbox</layout>
-            <checkbox>
-                <property>/sim/simbrief/options/import-fp</property>
-                <label>Flight Plan Route</label>
-                <binding>
-                    <command>dialog-apply</command>
-                </binding>
-                <halign>left</halign>
-                <valign>top</valign>
+            <group>
                 <pref-width>100</pref-width>
-            </checkbox>
+                <layout>vbox</layout>
+                <checkbox>
+                    <property>/sim/simbrief/options/import-fp</property>
+                    <label>Flight Plan Route</label>
+                    <binding>
+                        <command>dialog-apply</command>
+                    </binding>
+                    <halign>left</halign>
+                    <valign>top</valign>
+                    <pref-width>100</pref-width>
+                </checkbox>
+                <checkbox>
+                    <property>/sim/simbrief/options/import-airways</property>
+                    <label>Airways</label>
+                    <binding>
+                        <command>dialog-apply</command>
+                    </binding>
+                    <halign>left</halign>
+                    <valign>top</valign>
+                    <pref-width>100</pref-width>
+                </checkbox>
+            </group>
             <group>
                 <pref-width>100</pref-width>
                 <layout>vbox</layout>
