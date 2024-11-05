@@ -73,7 +73,7 @@ var read = func (filename=nil) {
 
 var toFlightplan = func (ofp, fp=nil) {
     # Options
-    var importAirways = getprop('/sim/simbrief/options/import-departure') or 0;
+    var importAirways = getprop('/sim/simbrief/options/import-airways') or 0;
 
     # get departure and destination
     var departureID = ofp.getNode('origin/icao_code').getValue();
