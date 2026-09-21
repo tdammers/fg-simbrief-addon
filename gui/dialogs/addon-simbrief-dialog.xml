@@ -6,12 +6,9 @@
 
     <group>
         <layout>hbox</layout>
-		<empty>
-			<stretch>1</stretch>
-		</empty>
-
         <text>
-            <label>SimBrief</label>
+			<halign>left</halign>
+            <label>SimBrief Importer</label>
         </text>
 
 		<empty>
@@ -19,11 +16,11 @@
 		</empty>
 
 		<button>
-			<pref-width>16</pref-width>
-			<pref-height>16</pref-height>
-			<legend></legend>
-			<keynum>27</keynum>
-			<border>2</border>
+			<halign>right</halign>
+			<pref-width>20</pref-width>
+			<pref-height>20</pref-height>
+			<legend>X</legend>
+			<key>Esc</key>
 			<binding>
 				<command>dialog-close</command>
 			</binding>
@@ -52,21 +49,10 @@
         <empty>
             <pref-height>10</pref-height>
         </empty>
-        <group>
-            <layout>hbox</layout>
-
-            <empty>
-                <stretch>1</stretch>
-            </empty>
-
-            <text>
-                <label>What to import</label>
-            </text>
-
-            <empty>
-                <stretch>1</stretch>
-            </empty>
-        </group>
+        <text>
+            <halign>left</halign>
+            <label>Importer Options</label>
+        </text>
         <hrule/>
         <group>
             <layout>hbox</layout>
@@ -117,7 +103,7 @@
                 </checkbox>
                 <checkbox>
                     <property>/sim/simbrief/options/autocommit</property>
-                    <label>Activate immediately</label>
+                    <label>Activate Immediately</label>
                     <binding>
                         <command>dialog-apply</command>
                     </binding>
@@ -130,7 +116,7 @@
             <layout>hbox</layout>
             <checkbox>
                 <property>/sim/simbrief/options/import-perfinit</property>
-                <label>Performance init</label>
+                <label>Performance Init</label>
                 <binding>
                     <command>dialog-apply</command>
                 </binding>

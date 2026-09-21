@@ -67,24 +67,20 @@ Available options:
   overwrite winds aloft regardless of what we set. The "Start" and "Stop"
   buttons allow you to manually start and stop the winds updater.
 
-Supported Aircraft Types (as per 09/2021)
+Known Supported Aircraft Types (as per 09/2026)
 -----------------------------------------
 
                          | FPL | Dep/SID | Arr/STAR | Perf Init | Payload | Fuel |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| E-Jet-family-YV [6]    | yes | yes     | yes      | yes       | yes     | yes  |
-+------------------------+-----+---------+----------+-----------+---------+------+
-| A320-family [1]        |                   n/a                | yes     | yes  |
-+------------------------+-----+---------+----------+-----------+---------+------+
-| 747-8i                 | yes | yes     | yes      | yes       | yes     | yes  |
-+------------------------+-----+---------+----------+-----------+---------+------+
-| MD-11 [5]              | yes | yes     | yes      | yes       | yes     | yes  |
+| 737-800YV [2]          | yes | yes     | yes      | yes       | partial | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
 | 747-400                | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| 737-800YV [2]          | yes | yes     | yes      | yes       | partial | yes  |
+| 747-8i                 | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
 | 777 [3]                | yes | yes     | yes      | yes       | no      | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| A320-family [1]        |                   n/a                | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
 | Citation-II [4]        | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
@@ -92,9 +88,17 @@ Supported Aircraft Types (as per 09/2021)
 +------------------------+-----+---------+----------+-----------+---------+------+
 | CRJ700-family          | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
-| QSeries                | yes | yes     | yes      | yes       | no      | yes  |
+| DC-10 [5]              | yes | yes     | yes      | yes       | yes     | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
 | DHC6 [4]               | yes | yes     | yes      | yes       | yes     | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| E-Jet-family-YV [6]    | yes | yes     | yes      | yes       | yes     | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| MD-11 [5]              | yes | yes     | yes      | yes       | yes     | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| MD-80 [5]              | yes | yes     | yes      | yes       | yes     | yes  |
++------------------------+-----+---------+----------+-----------+---------+------+
+| QSeries                | yes | yes     | yes      | yes       | no      | yes  |
 +------------------------+-----+---------+----------+-----------+---------+------+
 
 [1] - This aircraft already includes a SimBrief import feature, so this addon
@@ -106,8 +110,7 @@ Supported Aircraft Types (as per 09/2021)
 [4] - Imported flight plan is of limited use, because the aircraft does not
       have an FMS.
 [5] - Currently works, but devs plan to make a custom importer, at which point
-      [1] will apply. Some versions of this aircraft will also not handle
-      imported fuel and payload correctly.
+      [1] will apply.
 [6] - Older versions (as of 2021-10-17) had their own SimBrief importer, which
       this addon is based on. The current release of the E-Jet family does not
       include the custom importer anymore, instead requiring you to use this
